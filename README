@@ -1,0 +1,58 @@
+JANES - navigate open source intelligence
+
+DESCRIPTION
+	JANES was created primarily to organize records pertaining
+	to hundreds of military aircraft (though this is by no means
+	its only conceivable use). The app extends werc's normal
+	functionality by dynamically constructing an "index" page
+	from arbitrary files found within the indicated directory.
+	The components and layout used to build said page are
+	specified by a configuration file, described below. Likewise,
+	sub-directories that are meant to be ignored are specified
+	in a separate file.
+
+	The most obvious benefit of these features is to simplify the
+	programmatic creation, updating and presentation of large
+	sets of similarly structured data.
+
+	To enable JANES, add:
+
+		conf_enable_janes
+
+	to _werc/config in the site root or appropriate sub-directory.
+
+	To configure JANES, copy or create the following files in
+	 _werc/janes/, either in the site root or in the sub-directory
+	you wish to activate (example files have been included in
+	this distribution):
+
+	layout
+		A list of files and headings that appear on the resulting
+		page, in order, from top to bottom. The first field of each
+		line corresponds to the name of a file containing infor-
+		mation that will appear under the heading. The second
+		field is a text string that will appear as the heading itself.
+		Spaces are considered invalid; underscores in the second
+		field will be replaced with spaces when rendered on the
+		page.
+
+	skipdirs
+		A list of directories JANES will not attempt to process.
+		An example is the directory img/, which on the JANES
+		DEVELOPMENT SITE is instead processed by yiyus'
+		image gallery app, SMAK. Skipdirs are presented as
+		links at the top of each JANES page. If the directory
+		img/_werc/smak/thumb/ exists, the first file in that
+		directory will be displayed as an inline image at the
+		top of the page.
+
+	In normal directories, files containing lines that begin with
+	the string http:// will be rendered as HTML links to the given
+	URL, one link per line.
+
+SOURCE
+	http://plan9.stanleylieber.com/werc/apps/janes.tgz
+	https://bitbucket.org/stanleylieber/janes
+
+DEVELOPMENT SITE
+	http://notreally.info

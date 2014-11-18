@@ -1,0 +1,64 @@
+fn conf_enable_janes{
+	janes_base_uri=$conf_wd
+	janes_root=`{pwd}
+	conf_enable_app janes
+}
+
+fn janes_build{
+	if(test -f $janes_root/$"janes_dir/img/_werc/smak/thumb/*){
+		img=`{ls -p $janes_root/$"janes_dir/img/_werc/smak/thumb | sed 1q}
+		echo '<p><a href="img/" target="_b"><img src="img/_werc/smak/thumb/'^$img^'" border="0"></a>'
+	}
+	for(i in $skipdirs){
+		if(test -d $janes_root/$"janes_dir/$i)
+			echo '<a href="'^$i^'/" target="_b">'^$i^'</a>'
+	}
+	n=1
+	for(i in $files){
+		if(test -f $janes_root/$"janes_dir/$i){
+			echo '<h2>'^$headings($n)^'</h2>' | sed 's/_/ /g'
+			janes_handler $janes_root/$"janes_dir/$i
+		}
+		n=`{echo $n^+1 | bc}
+	}
+}
+
+fn janes_handler{
+	if(grep -s -e '^http:\/\/' $1)
+		for(i in `{cat $1})
+			echo '<p><a href="'^$i^'" target="_b">'^$i^'</a>'
+	if not
+		md_handler $1
+}
+
+fn janes_init{
+	p=`{echo $req_path | sed 's!^'^$janes_base_uri^'!!'}
+	janes_dir=`{basename -d $"p | sed 's!^\.$!!'}
+
+	if(test -f $janes_root/$"janes_dir/_werc/janes/skipdirs)
+		skipdirs=`{cat $janes_root/$"janes_dir/_werc/janes/skipdirs}
+	if not if(test -f $janes_root/_werc/janes/skipdirs)
+		skipdirs=`{cat $janes_root/_werc/janes/skipdirs}
+
+	if(test -f $janes_root/$"janes_dir/_werc/janes/layout){
+		files=`{awk '{print $1;}' $janes_root/$"janes_dir/_werc/janes/layout}
+		headings=`{awk '{print $2;}' $janes_root/$"janes_dir/_werc/janes/layout}
+	}
+	if not if(test -f $janes_root/_werc/janes/layout){
+		files=`{awk '{print $1;}' $janes_root/_werc/janes/layout}
+		headings=`{awk '{print $2;}' $janes_root/_werc/janes/layout}
+	}
+
+	if(test -d $janes_root/$"janes_dir \
+		&& ! ~ `{basename $"janes_dir} $skipdirs \
+		&& ! test -f $janes_root/$"janes_dir^/index.^(md htm html tpl)){
+			handler_body_main=(tpl_handler `{janes_template entry})
+	}
+}
+
+fn janes_template{
+	if(test -f $janes_root/_werc/janes/$1.tpl)
+		echo -n $janes_root/_werc/janes/$1.tpl
+	if not
+		get_lib_file janes/$1.tpl apps/janes/$1.tpl
+}
